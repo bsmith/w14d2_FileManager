@@ -21,7 +21,8 @@ public class Person {
     private String name;
 
     @OneToMany(mappedBy = "person", fetch = FetchType.LAZY)
-    @JsonBackReference
+//    @JsonManagedReference("person_folders")
+    @JsonIgnore
     private List<Folder> folders;
 
     public Person(String name) {

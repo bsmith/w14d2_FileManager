@@ -1,9 +1,6 @@
 package uk.bs338.codeclan.filemanager.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Type;
 
@@ -26,13 +23,14 @@ public class Folder {
     private String title;
 
     @OneToMany(mappedBy = "folder", fetch = FetchType.LAZY)
-    @JsonBackReference
+//    @JsonManagedReference("folder_files")
+    @JsonIgnore
     private List<File> files;
 
     @ManyToOne
     @JoinColumn(name = "person_id", nullable = false)
     //You can use JsonBackReference here as an alternative
-    @JsonManagedReference(value="person")
+//    @JsonBackReference("folder_person")
     private Person person;
 
     public Folder(String title, Person person) {

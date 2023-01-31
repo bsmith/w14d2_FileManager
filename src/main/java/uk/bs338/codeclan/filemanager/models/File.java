@@ -31,7 +31,7 @@ public class File {
     @ManyToOne
     @JoinColumn(name = "folder_id", nullable = false)
     //You can use JsonBackReference here as an alternative
-    @JsonManagedReference(value="folder")
+//    @JsonBackReference("file_folder")
     private Folder folder;
 
     public File(String name, String extension, long size, Folder folder) {
@@ -94,6 +94,9 @@ public class File {
     }
 
     public String formatFilename() {
-        return formatFilename(this.folder.getPerson().getName(), this.folder.getTitle(), name, extension);
+        String folderTitle = this.folder != null ? this.folder.getTitle() : null;
+        String personName = this.folder != null && this.folder.getPerson() != null ?
+                this.folder.getPerson().getName() : null;
+        return formatFilename(personName, folderTitle, name, extension);
     }
 }
