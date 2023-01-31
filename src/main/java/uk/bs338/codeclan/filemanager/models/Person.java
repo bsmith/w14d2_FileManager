@@ -4,13 +4,14 @@ import com.fasterxml.jackson.annotation.*;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "ships")
+@Table(name = "persons")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Person {
-
+    /* By using an object here, it can be null */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,17 +20,26 @@ public class Person {
     @Type(type="org.hibernate.type.TextType")
     private String name;
 
-    @OneToMany(mappedBy = "ship", fetch = FetchType.LAZY)
-    //You can use JsonBackReference here as an alternative
-//    @JsonIgnoreProperties({"ship"})
+    @OneToMany(mappedBy = "person", fetch = FetchType.LAZY)
     @JsonBackReference
-    private List<File> files;
+    private List<Folder> folders;
 
     public Person(String name) {
         this.name = name;
+        this.folders = new ArrayList<>();
+        System.out.printf("* Person(%s) = %s%n", name, this);
     }
 
     public Person() {
+        System.out.printf("* Person() = %s%n", this);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -40,19 +50,11 @@ public class Person {
         this.name = name;
     }
 
-    public List<File> getPirates() {
-        return files;
+    public List<Folder> getFolders() {
+        return folders;
     }
 
-    public void setPirates(List<File> files) {
-        this.files = files;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public void setFolders(List<Folder> folders) {
+        this.folders = folders;
     }
 }

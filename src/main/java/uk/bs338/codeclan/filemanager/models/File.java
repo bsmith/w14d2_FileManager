@@ -9,81 +9,41 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "pirates")
+@Table(name = "files")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class File {
-
-    /* the type suggestion is from https://dev.to/yugabyte/jpa-and-postgresql-text-2ma6 */
-    @Column(name = "first_name")
-    @Type(type="org.hibernate.type.TextType")
-    private String firstName;
-
-    @Column(name = "last_name")
-    @Type(type="org.hibernate.type.TextType")
-    private String lastName;
-
-    @Column(name = "age")
-    private int age;
-
     /* By using an object here, it can be null */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /* the type suggestion is from https://dev.to/yugabyte/jpa-and-postgresql-text-2ma6 */
+    @Column
+    @Type(type="org.hibernate.type.TextType")
+    private String name;
+
+    @Column(length = 4)
+    private String extension;
+
+    @Column
+    private long size;
+
     @ManyToOne
-    @JoinColumn(name = "ship_id", nullable = false)
+    @JoinColumn(name = "folder_id", nullable = false)
     //You can use JsonBackReference here as an alternative
-//    @JsonIgnoreProperties({"pirates"})
-//    @JsonManagedReference(value="ship")
-    private Person person;
+    @JsonManagedReference(value="folder")
+    private Folder folder;
 
-    @ManyToMany
-    //You can use JsonBackReference here as an alternative
-//    @JsonIgnoreProperties({"pirates"})
-    @JsonBackReference(value="raids")
-    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE})
-    @JoinTable(
-            name = "pirates_raids",
-            joinColumns = {@JoinColumn(name = "pirate_id", nullable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "raid_id", nullable = false, updatable = false)}
-    )
-    private List<Folder> folders;
-
-    public File(String firstName, String lastName, int age, Person person) {
-        System.out.printf("* Pirate(%s,%s,%s,%s) = %s%n", firstName, lastName, age, person, this);
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.age = age;
-        this.person = person;
-        this.folders = new ArrayList<Folder>();
+    public File(String name, String extension, long size, Folder folder) {
+        this.name = name;
+        this.extension = extension;
+        this.size = size;
+        this.folder = folder;
+        System.out.printf("* File(%s,size=%s) = %s%n", this.formatFilename(), size, this);
     }
 
     public File(){
-        System.out.printf("* Pirate() = %s%n", this);
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
+        System.out.printf("* File() = %s%n", this);
     }
 
     public Long getId() {
@@ -94,24 +54,46 @@ public class File {
         this.id = id;
     }
 
-    public Person getShip() {
-        return person;
+    public String getName() {
+        return name;
     }
 
-    public void setShip(Person person) {
-        this.person = person;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public List<Folder> getRaids() {
-        return folders;
+    public String getExtension() {
+        return extension;
     }
 
-    public void setRaids(List<Folder> folders) {
-        this.folders = folders;
+    public void setExtension(String extension) {
+        this.extension = extension;
     }
 
-    public void addRaid(Folder folder){
-        this.folders.add(folder);
+    public long getSize() {
+        return size;
     }
 
+    public void setSize(long size) {
+        this.size = size;
+    }
+
+    public Folder getFolder() {
+        return folder;
+    }
+
+    public void setFolder(Folder folder) {
+        this.folder = folder;
+    }
+
+    public static String formatFilename(String personName, String folderTitle, String fileName, String extension) {
+        if (fileName == null) fileName = "";
+        if (extension == null) extension = "";
+        return String.format("$%s[%s]%s%s%s", personName, folderTitle, fileName,
+                extension.length() > 0 ? ";" : "", extension);
+    }
+
+    public String formatFilename() {
+        return formatFilename(this.folder.getPerson().getName(), this.folder.getTitle(), name, extension);
+    }
 }

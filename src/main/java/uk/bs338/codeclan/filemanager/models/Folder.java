@@ -1,6 +1,9 @@
 package uk.bs338.codeclan.filemanager.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Type;
 
@@ -9,39 +12,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "raids")
+@Table(name = "folders")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Folder {
-
+    /* By using an object here, it can be null */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="location")
+    /* the type suggestion is from https://dev.to/yugabyte/jpa-and-postgresql-text-2ma6 */
+    @Column
     @Type(type="org.hibernate.type.TextType")
-    private String location;
+    private String title;
 
-    @Column(name = "loot")
-    private int loot;
-
-    @ManyToMany
-    //You can use JsonBackReference here as an alternative
-//    @JsonIgnoreProperties({"raids"})
+    @OneToMany(mappedBy = "folder", fetch = FetchType.LAZY)
     @JsonBackReference
-    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE})
-    @JoinTable(
-            name = "pirates_raids",
-            joinColumns = {@JoinColumn(name = "raid_id", nullable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name="pirate_id", nullable = false, updatable = false)}
-    )
     private List<File> files;
 
-    public Folder(String location, int loot) {
-        this.location = location;
-        this.loot = loot;
-        this.files = new ArrayList<File>();
+    @ManyToOne
+    @JoinColumn(name = "person_id", nullable = false)
+    //You can use JsonBackReference here as an alternative
+    @JsonManagedReference(value="person")
+    private Person person;
+
+    public Folder(String title, Person person) {
+        this.title = title;
+        this.files = new ArrayList<>();
+        this.person = person;
+        System.out.printf("* Folder(%s) = %s%n", this.formatFilename(), this);
     }
 
     public Folder() {
+        System.out.printf("* Folder() = %s%n", this);
     }
 
     public Long getId() {
@@ -52,31 +54,31 @@ public class Folder {
         this.id = id;
     }
 
-    public String getLocation() {
-        return location;
+    public String getTitle() {
+        return title;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public int getLoot() {
-        return loot;
-    }
-
-    public void setLoot(int loot) {
-        this.loot = loot;
-    }
-
-    public List<File> getPirates() {
+    public List<File> getFiles() {
         return files;
     }
 
-    public void setPirates(List<File> files) {
+    public void setFiles(List<File> files) {
         this.files = files;
     }
 
-    public void addPirate(File file){
-        this.files.add(file);
+    public Person getPerson() {
+        return person;
+    }
+
+    public void setPerson(Person person) {
+        this.person = person;
+    }
+
+    public String formatFilename() {
+        return File.formatFilename(this.person.getName(), title, "", "");
     }
 }
