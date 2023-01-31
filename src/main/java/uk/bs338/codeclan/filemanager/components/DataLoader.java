@@ -13,6 +13,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Profile("!test") //Run every time EXCEPT Tests
 @ConditionalOnExpression("${dataLoaderEnabled:false}")
 @Component
@@ -22,14 +25,12 @@ public class DataLoader implements ApplicationRunner {
     FileRepository fileRepository;
 
     @Autowired
-    PersonRepository personRepository;
-
-    @Autowired
     FolderRepository folderRepository;
 
+    @Autowired
+    PersonRepository personRepository;
 
     public DataLoader() {
-
     }
 
     public void run(ApplicationArguments args) {
@@ -39,97 +40,46 @@ public class DataLoader implements ApplicationRunner {
         folderRepository.deleteAll();
         personRepository.deleteAll();
 
-        Person dutchman = new Person("The Flying Dutchman");
-        personRepository.save(dutchman);
+        Person mainPerson = new Person("main");
+        Person testPerson = new Person("test");
+        List<Person> people = Arrays.asList(mainPerson, testPerson);
+        personRepository.saveAll(people);
 
-        Person pearl = new Person("The Black Pearl");
-        personRepository.save(pearl);
+        Folder testFolder = new Folder("tests", testPerson);
+        folderRepository.save(testFolder);
 
-        Person blackPig = new Person("The Black Pig");
-        personRepository.save(blackPig);
+        fileRepository.save(new File("ApplicationTests", "java", 100, testFolder));
 
-        Person dustman = new Person("The Flying Dustman");
-        personRepository.save(dustman);
+        Folder componentsFolder = new Folder("components", mainPerson);
+        folderRepository.save(componentsFolder);
 
-        Person galley = new Person("Adventure Galley");
-        personRepository.save(galley);
+        fileRepository.save(new File("DataLoader", "java", 500, componentsFolder));
 
-        Person revenge = new Person("Queen Anne's Revenge");
-        personRepository.save(revenge);
+        Folder controllersFolder = new Folder("controllers", mainPerson);
+        folderRepository.save(controllersFolder);
 
-        Person fancy = new Person("Fancy");
-        personRepository.save(fancy);
+        fileRepository.save(new File("FileController", "java", 50, controllersFolder));
+        fileRepository.save(new File("FolderController", "java", 51, controllersFolder));
+        fileRepository.save(new File("PersonController", "java", 52, controllersFolder));
 
-        Person fortune = new Person("Royal Fortune");
-        personRepository.save(fortune);
+        Folder modelsFolder = new Folder("models", mainPerson);
+        folderRepository.save(modelsFolder);
 
-        File jack = new File("Jack", "Sparrow", 32, pearl);
-        fileRepository.save(jack);
+        fileRepository.save(new File("File", "java", 70, modelsFolder));
+        fileRepository.save(new File("Folder", "java", 71, modelsFolder));
+        fileRepository.save(new File("Person", "java", 72, modelsFolder));
 
-        File john = new File("John", "Silver", 55, dutchman);
-        fileRepository.save(john);
+        Folder repositoriesFolder = new Folder("repositories", mainPerson);
+        folderRepository.save(repositoriesFolder);
 
-        File pugwash = new File("Horatio", "Pugwash", 55, blackPig);
-        fileRepository.save(pugwash);
+        fileRepository.save(new File("FileRepository", "java", 80, repositoriesFolder));
+        fileRepository.save(new File("FolderRepository", "java", 81, repositoriesFolder));
+        fileRepository.save(new File("PersonRepository", "java", 82, repositoriesFolder));
 
-        File maggie = new File("Maggie", "Lafayette", 35, dustman);
-        fileRepository.save(maggie);
+        Folder toplevelFolder = new Folder("", mainPerson);
+        folderRepository.save(toplevelFolder);
 
-        File william = new File("William", "Kidd", 40, galley);
-        fileRepository.save(william);
-
-        File blackbeard = new File("Edward", "Teach", 45, revenge);
-        fileRepository.save(blackbeard);
-
-        File henry = new File("Henry", "Avery", 25, fancy);
-        fileRepository.save(henry);
-
-        File bart = new File("Bartholomew", "Roberts", 47, fortune);
-        fileRepository.save(bart);
-
-
-        Folder folder1 = new Folder("Tortuga", 100);
-        folderRepository.save(folder1);
-
-        Folder folder2 = new Folder("Treasure Island", 690);
-        folderRepository.save(folder2);
-
-        Folder folder3 = new Folder("Barbados", 500);
-        folderRepository.save(folder3);
-
-        Folder folder4 = new Folder("St. Kitts", 500);
-        folderRepository.save(folder4);
-
-        Folder folder5 = new Folder("Havana", 200);
-        folderRepository.save(folder5);
-
-        Folder folder6 = new Folder("Port Royal", 1000);
-        folderRepository.save(folder6);
-
-        jack.addRaid(folder1);
-        jack.addRaid(folder2);
-        fileRepository.save(jack);
-
-        folder2.addPirate(john);
-        folderRepository.save(folder2);
-
-        folder3.addPirate(pugwash);
-        folder3.addPirate(maggie);
-        folderRepository.save(folder3);
-
-        folder4.addPirate(pugwash);
-        folder3.addPirate(jack);
-        folderRepository.save(folder4);
-
-        blackbeard.addRaid(folder5);
-        blackbeard.addRaid(folder6);
-        fileRepository.save(blackbeard);
-
-        folder5.addPirate(william);
-        folderRepository.save(folder5);
-
-        folder6.addPirate(henry);
-        folderRepository.save(folder6);
+        fileRepository.save(new File("Application", "java", 200, toplevelFolder));
 
         System.out.println("*** FINISHED THE DATA LOADER ***");
     }
