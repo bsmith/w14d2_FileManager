@@ -20,14 +20,14 @@ public class File {
     private Long id;
 
     /* the type suggestion is from https://dev.to/yugabyte/jpa-and-postgresql-text-2ma6 */
-    @Column
+    @Column(nullable = false)
     @Type(type="org.hibernate.type.TextType")
     private String name;
 
     @Column(length = 4)
     private String extension;
 
-    @Column
+    @Column(nullable = false)
     private long size;
 
     @ManyToOne
