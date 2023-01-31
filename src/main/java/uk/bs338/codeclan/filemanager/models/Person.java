@@ -1,4 +1,4 @@
-package uk.bs338.codeclan.pirateservice.models;
+package uk.bs338.codeclan.filemanager.models;
 
 import com.fasterxml.jackson.annotation.*;
 import org.hibernate.annotations.Type;
@@ -9,7 +9,7 @@ import java.util.List;
 @Entity
 @Table(name = "ships")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class Ship {
+public class Person {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,13 +23,13 @@ public class Ship {
     //You can use JsonBackReference here as an alternative
 //    @JsonIgnoreProperties({"ship"})
     @JsonBackReference
-    private List<Pirate> pirates;
+    private List<File> files;
 
-    public Ship(String name) {
+    public Person(String name) {
         this.name = name;
     }
 
-    public Ship() {
+    public Person() {
     }
 
     public String getName() {
@@ -40,12 +40,12 @@ public class Ship {
         this.name = name;
     }
 
-    public List<Pirate> getPirates() {
-        return pirates;
+    public List<File> getPirates() {
+        return files;
     }
 
-    public void setPirates(List<Pirate> pirates) {
-        this.pirates = pirates;
+    public void setPirates(List<File> files) {
+        this.files = files;
     }
 
     public Long getId() {

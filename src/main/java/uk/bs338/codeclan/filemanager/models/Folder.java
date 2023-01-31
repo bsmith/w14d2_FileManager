@@ -1,8 +1,6 @@
-package uk.bs338.codeclan.pirateservice.models;
+package uk.bs338.codeclan.filemanager.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Type;
 
@@ -12,7 +10,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "raids")
-public class Raid {
+public class Folder {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,15 +33,15 @@ public class Raid {
             joinColumns = {@JoinColumn(name = "raid_id", nullable = false, updatable = false)},
             inverseJoinColumns = {@JoinColumn(name="pirate_id", nullable = false, updatable = false)}
     )
-    private List<Pirate> pirates;
+    private List<File> files;
 
-    public Raid(String location, int loot) {
+    public Folder(String location, int loot) {
         this.location = location;
         this.loot = loot;
-        this.pirates = new ArrayList<Pirate>();
+        this.files = new ArrayList<File>();
     }
 
-    public Raid() {
+    public Folder() {
     }
 
     public Long getId() {
@@ -70,15 +68,15 @@ public class Raid {
         this.loot = loot;
     }
 
-    public List<Pirate> getPirates() {
-        return pirates;
+    public List<File> getPirates() {
+        return files;
     }
 
-    public void setPirates(List<Pirate> pirates) {
-        this.pirates = pirates;
+    public void setPirates(List<File> files) {
+        this.files = files;
     }
 
-    public void addPirate(Pirate pirate){
-        this.pirates.add(pirate);
+    public void addPirate(File file){
+        this.files.add(file);
     }
 }

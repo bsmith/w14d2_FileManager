@@ -1,4 +1,4 @@
-package uk.bs338.codeclan.pirateservice.models;
+package uk.bs338.codeclan.filemanager.models;
 
 import com.fasterxml.jackson.annotation.*;
 import org.hibernate.annotations.Cascade;
@@ -11,7 +11,7 @@ import java.util.List;
 @Entity
 @Table(name = "pirates")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class Pirate{
+public class File {
 
     /* the type suggestion is from https://dev.to/yugabyte/jpa-and-postgresql-text-2ma6 */
     @Column(name = "first_name")
@@ -35,7 +35,7 @@ public class Pirate{
     //You can use JsonBackReference here as an alternative
 //    @JsonIgnoreProperties({"pirates"})
 //    @JsonManagedReference(value="ship")
-    private Ship ship;
+    private Person person;
 
     @ManyToMany
     //You can use JsonBackReference here as an alternative
@@ -47,18 +47,18 @@ public class Pirate{
             joinColumns = {@JoinColumn(name = "pirate_id", nullable = false, updatable = false)},
             inverseJoinColumns = {@JoinColumn(name = "raid_id", nullable = false, updatable = false)}
     )
-    private List<Raid> raids;
+    private List<Folder> folders;
 
-    public Pirate(String firstName, String lastName, int age, Ship ship) {
-        System.out.printf("* Pirate(%s,%s,%s,%s) = %s%n", firstName, lastName, age, ship, this);
+    public File(String firstName, String lastName, int age, Person person) {
+        System.out.printf("* Pirate(%s,%s,%s,%s) = %s%n", firstName, lastName, age, person, this);
         this.firstName = firstName;
         this.lastName = lastName;
         this.age = age;
-        this.ship = ship;
-        this.raids = new ArrayList<Raid>();
+        this.person = person;
+        this.folders = new ArrayList<Folder>();
     }
 
-    public Pirate(){
+    public File(){
         System.out.printf("* Pirate() = %s%n", this);
     }
 
@@ -94,24 +94,24 @@ public class Pirate{
         this.id = id;
     }
 
-    public Ship getShip() {
-        return ship;
+    public Person getShip() {
+        return person;
     }
 
-    public void setShip(Ship ship) {
-        this.ship = ship;
+    public void setShip(Person person) {
+        this.person = person;
     }
 
-    public List<Raid> getRaids() {
-        return raids;
+    public List<Folder> getRaids() {
+        return folders;
     }
 
-    public void setRaids(List<Raid> raids) {
-        this.raids = raids;
+    public void setRaids(List<Folder> folders) {
+        this.folders = folders;
     }
 
-    public void addRaid(Raid raid){
-        this.raids.add(raid);
+    public void addRaid(Folder folder){
+        this.folders.add(folder);
     }
 
 }
