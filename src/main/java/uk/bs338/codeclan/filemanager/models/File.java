@@ -7,6 +7,8 @@ import org.hibernate.annotations.Type;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 
 @Entity
 @Table(name = "files")
@@ -93,10 +95,22 @@ public class File {
                 extension.length() > 0 ? ";" : "", extension);
     }
 
+    /* Takes a function that might return null and lift it into a version that returns Optional instead */
+    static public <U, T> Function<U, Optional<T>> liftNullable(Function<U, T> func) {
+        return arg -> Optional.ofNullable(func.apply(arg));
+    };
+
+    @JsonGetter
     public String formatFilename() {
-        String folderTitle = this.folder != null ? this.folder.getTitle() : null;
-        String personName = this.folder != null && this.folder.getPerson() != null ?
-                this.folder.getPerson().getName() : null;
+//        String folderTitle = this.folder != null ? this.folder.getTitle() : null;
+//        String personName = this.folder != null && this.folder.getPerson() != null ?
+//                this.folder.getPerson().getName() : null;
+        String folderTitle = Optional.ofNullable(this.folder).map(Folder::getTitle).orElse(null);
+        /* needs a lifted version of Optional.ofNullable? */
+        String personName = Optional.ofNullable(this.folder)
+//                .flatMap(folder -> Optional.ofNullable(folder.getPerson()))
+                .flatMap(liftNullable(Folder::getPerson))
+                .map(Person::getName).orElse(null);
         return formatFilename(personName, folderTitle, name, extension);
     }
 }

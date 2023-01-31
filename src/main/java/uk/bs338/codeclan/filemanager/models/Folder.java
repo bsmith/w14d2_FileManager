@@ -76,7 +76,9 @@ public class Folder {
         this.person = person;
     }
 
+    @JsonGetter
     public String formatFilename() {
-        return File.formatFilename(this.person.getName(), title, "", "");
+        String personName = this.person != null ? this.person.getName() : null;
+        return File.formatFilename(personName, title, "", "");
     }
 }
