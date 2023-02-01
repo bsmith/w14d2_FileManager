@@ -27,7 +27,7 @@ public class Folder {
     @JsonIgnore
     private List<File> files;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "person_id", nullable = false)
     //You can use JsonBackReference here as an alternative
 //    @JsonBackReference("folder_person")

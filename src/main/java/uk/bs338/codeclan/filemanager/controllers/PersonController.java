@@ -41,6 +41,16 @@ public class PersonController {
         return new ResponseEntity<>(person, HttpStatus.CREATED);
     }
 
+    @GetMapping("{id}/files")
+    @ResponseStatus(HttpStatus.OK)
+    public List<File> listFilesOfPerson(@PathVariable Long id) {
+        ArrayList<File> files = new ArrayList<>();
+        Person person = personRepository.findById(id).get();
+        for (Folder folder : person.getFolders())
+            files.addAll(folder.getFiles());
+        return files;
+    }
+
 //    @GetMapping(value = "/ships/{id}/pirates")
 //    public ResponseEntity<List<File>> getPiratesOnShip(@PathVariable Long id) {
 //        Optional<Person> ship = personRepository.findById(id);

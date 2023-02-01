@@ -30,7 +30,7 @@ public class File {
     @Column(nullable = false)
     private long size;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "folder_id", nullable = false)
     //You can use JsonBackReference here as an alternative
 //    @JsonBackReference("file_folder")

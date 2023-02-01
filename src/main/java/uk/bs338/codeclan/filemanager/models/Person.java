@@ -20,6 +20,13 @@ public class Person {
     @Type(type="org.hibernate.type.TextType")
     private String name;
 
+    /* I'm using @JsonIgnore here.
+    I'm using JsonIdentityInfo to solve the recursion problem since this is a doubly-linked tree structure.
+    These Persistence Entities are being reused as the DTOs for returning the JSON to the client in the responses
+    to the REST requests.  In those requests I don't want all the folders owned by the person lists (eg when listing
+    all the people).
+     */
+
     @OneToMany(mappedBy = "person", fetch = FetchType.LAZY)
 //    @JsonManagedReference("person_folders")
     @JsonIgnore
